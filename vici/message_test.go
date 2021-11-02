@@ -463,14 +463,14 @@ func TestMessageGet(t *testing.T) {
 }
 
 func TestMessageGetRecursive(t *testing.T) {
-	v := goldMessage.Get("section1", "sub-section", "key2")
+	v := goldMessage.recursiveGet("section1", "sub-section", "key2")
 	if s, ok := v.(string); !ok {
 		t.Fatalf("Expected %v to be string: received %T", v, v)
 	} else if s != "value2" {
 		t.Fatalf("Expected 'key2' to be 'value2': received %v", s)
 	}
 
-	v = goldMessage.Get("section1", "list1")
+	v = goldMessage.recursiveGet("section1", "list1")
 	if l, ok := v.([]string); !ok {
 		t.Fatalf("Expected %v to be []string: received %T", v, v)
 	} else if !reflect.DeepEqual(l, []string{"item1", "item2"}) {
@@ -482,7 +482,7 @@ func TestMessageGetRecursive(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	v = goldMessage.Get("section1", "sub-section")
+	v = goldMessage.recursiveGet("section1", "sub-section")
 	if m, ok := v.(*Message); !ok {
 		t.Fatalf("Expected %v to be *Message: received %T", v, v)
 	} else if !reflect.DeepEqual(m, want) {
@@ -579,17 +579,17 @@ func TestMessageGetSection(t *testing.T) {
 }
 
 func TestMessageGetRecursiveInvalid(t *testing.T) {
-	v := goldMessage.Get("section1", "sub-section", "key2", "invalid")
+	v := goldMessage.recursiveGet("section1", "sub-section", "key2", "invalid")
 	if v != nil {
 		t.Fatalf("expected to get nil in invalid Get (too many keys), got %v", v)
 	}
 
-	v = goldMessage.Get("section1", "invalid", "key2")
+	v = goldMessage.recursiveGet("section1", "invalid", "key2")
 	if v != nil {
 		t.Fatalf("expected to get nil in invalid Get (invalid intermediate), got %v", v)
 	}
 
-	v = goldMessage.Get("section1", "list1", "invalid")
+	v = goldMessage.recursiveGet("section1", "list1", "invalid")
 	if v != nil {
 		t.Fatalf("expected to get nil in invalid Get (intermediate is not sub-message), got %v", v)
 	}

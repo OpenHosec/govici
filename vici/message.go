@@ -208,7 +208,11 @@ func (m *Message) Unset(key string) {
 //
 // The value returned by Get is the internal message representation of that
 // field, which means the type is either string, []string, or *Message.
-func (m *Message) Get(key string, keys ...string) interface{} {
+func (m *Message) Get(key string) interface{} {
+	return m.recursiveGet(key)
+}
+
+func (m *Message) recursiveGet(key string, keys ...string) interface{} {
 	keys = append([]string{key}, keys...)
 
 	tmp := new(Message)
@@ -234,21 +238,21 @@ func (m *Message) Get(key string, keys ...string) interface{} {
 // GetString is like Get, but expects the returned type to be string. If it is
 // not, then ok is set to false.
 func (m *Message) GetString(key string, keys ...string) (s string, ok bool) {
-	s, ok = m.Get(key, keys...).(string)
+	s, ok = m.recursiveGet(key, keys...).(string)
 	return s, ok
 }
 
 // GetString is like Get, but expects the returned type to be []string. If it
 // is not, then ok is set to false.
 func (m *Message) GetList(key string, keys ...string) (l []string, ok bool) {
-	l, ok = m.Get(key, keys...).([]string)
+	l, ok = m.recursiveGet(key, keys...).([]string)
 	return l, ok
 }
 
 // GetString is like Get, but expects the returned type to be *Message. If it
 // is not, then ok is set to false.
 func (m *Message) GetSection(key string, keys ...string) (ms *Message, ok bool) {
-	ms, ok = m.Get(key, keys...).(*Message)
+	ms, ok = m.recursiveGet(key, keys...).(*Message)
 	return ms, ok
 }
 
